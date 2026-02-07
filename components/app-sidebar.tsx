@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useUser, useClerk } from "@clerk/nextjs"
 import {
@@ -48,9 +49,15 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-4 py-5">
         <Link href="/dashboard" className="group/logo flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary transition-shadow duration-150 group-hover/logo:shadow-md">
-            <span className="text-sm font-bold text-primary-foreground">L</span>
-          </div>
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg transition-shadow duration-150 group-hover/logo:shadow-md sm:h-10 sm:w-10">
+            <Image
+              src="/logo-nav.png"
+              alt="Liaison"
+              fill
+              className="object-contain object-center"
+              sizes="40px"
+            />
+          </span>
           <span className="text-lg font-semibold tracking-tight text-foreground group-data-[collapsible=icon]:hidden">
             Liaison
           </span>

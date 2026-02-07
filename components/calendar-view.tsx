@@ -183,25 +183,25 @@ function MonthView({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-hidden rounded-lg border border-border bg-border">
-        <div className="grid grid-cols-7 gap-px">
+      <div className="overflow-hidden rounded-lg border border-border bg-background">
+        <div className="grid grid-cols-7 border-b border-border">
           {daysOfWeek.map((day) => (
             <div
               key={day}
-              className="bg-muted/60 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+              className="border-r border-border bg-muted/60 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground last:border-r-0"
             >
               {day}
             </div>
           ))}
         </div>
         {weeks.map((week, wi) => (
-          <div key={wi} className="grid grid-cols-7 gap-px">
+          <div key={wi} className="grid grid-cols-7 border-b border-border last:border-b-0">
             {week.map((date, di) => {
               if (!date) {
                 return (
                   <div
                     key={`empty-${di}`}
-                    className="min-h-[80px] bg-card/60"
+                    className="min-h-[80px] border-r border-border bg-card/60 last:border-r-0"
                   />
                 )
               }
@@ -216,12 +216,12 @@ function MonthView({
                   type="button"
                   key={key}
                   onClick={() => onDayClick(date)}
-                  className={`flex min-h-[80px] flex-col items-start p-2 text-left transition-colors duration-100 ${
+                  className={`flex min-h-[80px] flex-col items-start border-r border-border p-2 text-left transition-colors duration-150 last:border-r-0 ${
                     today
-                      ? "bg-primary/[0.04]"
+                      ? "bg-primary/[0.04] hover:bg-primary/[0.08]"
                       : selected
-                        ? "bg-muted/60"
-                        : "bg-card hover:bg-muted/30"
+                        ? "bg-muted/60 hover:bg-muted/80"
+                        : "bg-card hover:bg-muted/60"
                   }`}
                 >
                   <span

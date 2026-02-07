@@ -145,28 +145,28 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-indigo-200/50 py-8">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-muted-foreground transition-opacity hover:opacity-90"
-            >
-              <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded">
-                <Image
-                  src="/logo.png"
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="object-contain"
-                />
-              </div>
-              <span className="text-sm font-medium">Liaison</span>
-            </Link>
-            <p className="text-center text-sm text-muted-foreground sm:text-left">
-              Professional relationship and outreach tracking.
-            </p>
-          </div>
+      <footer className="border-t border-teal-200/60 bg-teal-50/95 backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <Link
+            href="/"
+            className="flex items-center gap-3 text-foreground transition-opacity hover:opacity-90"
+          >
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg sm:h-11 sm:w-11">
+              <Image
+                src="/logo-nav.png"
+                alt="Liaison"
+                width={44}
+                height={44}
+                className="object-contain"
+              />
+            </span>
+            <span className="text-base font-semibold tracking-tight sm:text-lg">
+              Liaison
+            </span>
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            Professional relationship and outreach tracking.
+          </p>
         </div>
       </footer>
     </div>
