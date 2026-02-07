@@ -1,115 +1,122 @@
 # Liaison
 
-Liaison is a lightweight relationship and outreach management MVP for professionals managing ongoing connections such as sales prospects, partnerships, recruiting leads, or coffee chats.
+**Lightweight relationship and outreach management** for professionals—sales prospects, partnerships, recruiting leads, and coffee chats. Liaison focuses on **clarity**, **ownership**, and **reuse** of outreach workflows rather than automation or message volume.
 
-It focuses on clarity, ownership, and reuse of outreach workflows rather than automation or message volume.
+**[→ Live app](https://liaison-mvp.vercel.app/)**
 
-[Hosted Link:](https://liaison-mvp.vercel.app/)
+---
+
+## Table of contents
+
+- [Screenshots](#screenshots)
+- [Tech stack](#tech-stack)
+- [Problem & approach](#problem--approach)
+- [MVP scope](#mvp-scope)
+- [Local development](#local-development)
+- [Design philosophy](#design-philosophy)
+
+---
 
 ## Screenshots
 
-### Landing Page
-![Landing Page](public/landing-screenshot.png)
+| Page        | Preview |
+|------------|--------|
+| **Landing** | ![Landing Page](public/landing-screenshot.png) |
+| **Sign in** | ![Sign In](public/auth-screenshot.png) |
+| **Dashboard** | ![Dashboard](public/dash-screenshot.png) |
+| **Contacts** | ![Contacts](public/contacts-screenshot.png) |
+| **Sequences** | ![Sequences](public/seq-screenshot.png) |
+| **Tasks** | ![Tasks](public/task-screenshot.png) |
+| **Calendar** | ![Calendar](public/calendar-screenshot.png) |
 
-### Sign In / Auth
-![Sign In](public/auth-screenshot.png)
+---
 
-### Dashboard
-![Dashboard](public/dash-screenshot.png)
+## Tech stack
 
-### Contacts
-![Contacts](public/contacts-screenshot.png)
+| Layer | Choices |
+|-------|---------|
+| **Frontend** | Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui |
+| **Auth** | Clerk |
+| **Database** | Supabase (Postgres) |
+| **Data access** | Next.js Server Actions; all records scoped by `clerk_user_id` |
 
-### Sequences
-![Sequences](public/seq-screenshot.png)
+---
 
-### Tasks
-![Tasks](public/task-screenshot.png)
+## Problem & approach
 
-### Calendar
-![Calendar](public/calendar-screenshot.png)
+**Problem:** Relationships are spread across spreadsheets, notes, CRMs, and calendars. Many CRMs are too heavy for lightweight use or too rigid for personal workflows (e.g. networking, partnership development).
 
-## Tech Stack
+**Approach:** Liaison aims for a simpler middle ground:
 
-Frontend
-* Next.js App Router
-* TypeScript
-* Tailwind CSS
-* shadcn ui components
+- **Clear ownership** — Contacts belong to one user.
+- **Reusable sequences** — Define once, assign to many contacts.
+- **Minimal surface area** — Few concepts, strong data integrity.
 
-Authentication
-* Clerk
+---
 
-Database
-* Supabase Postgres
+## MVP scope
 
-Data Access
-* Next.js Server Actions for mutations and reads
-* Records scoped by clerk user id
+### Implemented
 
-## Problem
+- Clerk auth (hosted sign-in / sign-up).
+- User record created in Supabase on first sign-in.
+- **Contacts** — Full CRUD.
+- **Sequences** — Create sequences with ordered steps.
+- **Assignments** — Assign contacts to sequences.
+- **Tasks** — Derived from sequence steps; mark complete; calendar view.
+- Strict per-user scoping via `clerk_user_id`.
 
-Professionals often manage relationships across spreadsheets, notes apps, CRMs, and calendars. Many CRMs are too heavy for lightweight use cases or too rigid for personal workflows like networking and partnership development.
+### Out of scope (this MVP)
 
-Liaison explores a simpler middle ground focused on:
-* Clear ownership of contacts per user
-* Reusable outreach sequences
-* Minimal surface area with strong data integrity
+- Messaging automation  
+- Background jobs / schedulers  
+- Notifications  
+- Analytics  
+- External CRM integrations  
 
-## MVP Scope
+---
 
-This repository represents a deliberately scoped MVP focused on stability and correctness over feature depth.
+## Local development
 
-Implemented
-* Clerk auth using Clerk hosted sign in and sign up pages
-* Automatic user persistence in Supabase on first sign in
-* Contacts CRUD create read update delete
-* Sequences with ordered steps
-* Assign contacts to sequences
-* Strict per user scoping via clerk user id
+### Prerequisites
 
-Out of scope for this MVP
-* Messaging automation
-* Background jobs or schedulers
-* Notifications
-* Analytics
-* External CRM integrations
+- **Node.js** 18+
+- **Clerk** app ([clerk.com](https://clerk.com))
+- **Supabase** project ([supabase.com](https://supabase.com))
 
-## Architecture Notes
+### Setup
 
-All data is scoped by clerk user id so every record belongs to a signed in user. Mutations are performed through server actions to keep write access on the server.
+1. **Install dependencies**
 
-## Local Development
+   ```bash
+   npm install
+   ```
 
-Prereqs
-* Node.js 18 or higher
-* Clerk app
-* Supabase project
+2. **Environment variables**  
+   Copy `.env.example` to `.env.local` and set:
 
-Setup
-1. Install dependencies
-npm install
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
 
-2. Environment variables
-Copy .env.example to .env.local and set:
-* NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-* CLERK_SECRET_KEY
-* NEXT_PUBLIC_SUPABASE_URL
-* SUPABASE_SERVICE_ROLE_KEY
+3. **Database**  
+   Run the SQL in `supabase/schema.sql` in the Supabase SQL editor.
 
-3. Create database tables
-Run the SQL in supabase schema sql using the Supabase SQL editor.
+4. **Run the app**
 
-4. Run the app
-npm run dev
+   ```bash
+   npm run dev
+   ```
 
-## Design Philosophy
+---
 
-This MVP intentionally avoids heavy polish and over architecture. The goal is to validate:
-* A clean schema
-* Correct auth and authorization boundaries
-* A foundation that can later support CSV import and HubSpot friendly integration
+## Design philosophy
 
-## Status
+This MVP favors **stability and correctness** over heavy polish. Goals:
 
-Active MVP built and intended as a foundation for iteration rather than a production ready CRM.
+- A **clean schema** that’s easy to reason about.
+- **Correct auth and authorization** boundaries.
+- A **foundation** for future iteration (e.g. CSV import, HubSpot-style integration).
+
+**Status:** Active MVP—intended as a foundation for iteration, not a production-ready CRM.
