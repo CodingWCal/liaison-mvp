@@ -6,6 +6,29 @@ It focuses on clarity, ownership, and reuse of outreach workflows rather than au
 
 [Hosted Link:](https://liaison-mvp.vercel.app/)
 
+## Screenshots
+
+### Landing Page
+![Landing Page](public/landing-screenshot.png)
+
+### Sign In / Auth
+![Sign In](public/auth-screenshot.png)
+
+### Dashboard
+![Dashboard](public/dash-screenshot.png)
+
+### Contacts
+![Contacts](public/contacts-screenshot.png)
+
+### Sequences
+![Sequences](public/seq-screenshot.png)
+
+### Tasks
+![Tasks](public/task-screenshot.png)
+
+### Calendar
+![Calendar](public/calendar-screenshot.png)
+
 ## Tech Stack
 
 Frontend
