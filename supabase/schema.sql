@@ -54,3 +54,15 @@ create index if not exists idx_sequences_clerk_user_id on public.sequences(clerk
 create index if not exists idx_sequence_steps_sequence_id on public.sequence_steps(sequence_id);
 create index if not exists idx_contact_sequence_assignments_contact_id on public.contact_sequence_assignments(contact_id);
 create index if not exists idx_contact_sequence_assignments_sequence_id on public.contact_sequence_assignments(sequence_id);
+
+-- Task completion (derived tasks; no tasks table)
+create table if not exists public.completed_tasks (
+  id uuid primary key default gen_random_uuid(),
+  clerk_user_id text not null,
+  contact_id uuid not null,
+  sequence_id uuid not null,
+  step_order int not null,
+  completed_at timestamptz not null default now(),
+  unique(clerk_user_id, contact_id, sequence_id, step_order)
+);
+create index if not exists idx_completed_tasks_clerk_user_id on public.completed_tasks(clerk_user_id);
