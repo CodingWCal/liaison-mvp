@@ -4,6 +4,8 @@ Liaison is a lightweight relationship and outreach management MVP for profession
 
 It focuses on clarity, ownership, and reuse of outreach workflows rather than automation or message volume.
 
+[Hosted Link:](https://liaison-mvp.vercel.app/)
+
 ## Tech Stack
 
 Frontend
