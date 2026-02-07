@@ -87,4 +87,4 @@ This MVP intentionally avoids heavy polish and over architecture. The goal is to
 
 ## Status
 
-Active MVP built during an AI engineering fellowship. Intended as a foundation for iteration rather than a production ready CRM.
+Active MVP built and intended as a foundation for iteration rather than a production ready CRM.
