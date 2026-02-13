@@ -11,6 +11,7 @@ import {
   Calendar,
   Workflow,
   LogOut,
+  Settings,
 } from "lucide-react"
 import {
   Sidebar,
@@ -33,6 +34,7 @@ const navItems = [
   { title: "Sequences", href: "/sequences", icon: Workflow },
   { title: "Tasks", href: "/tasks", icon: CheckSquare },
   { title: "Calendar", href: "/calendar", icon: Calendar },
+  { title: "Settings", href: "/settings", icon: Settings },
 ]
 
 export function AppSidebar() {

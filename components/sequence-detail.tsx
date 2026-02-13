@@ -12,6 +12,8 @@ import {
   MapPin,
   Users,
   UserPlus,
+  Search,
+  SlidersHorizontal,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -26,6 +28,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import type { SequenceWithSteps, SequenceStepRow } from "@/lib/db/sequences"
 import type { Contact } from "@/lib/db/contacts"
@@ -66,9 +71,22 @@ export function SequenceDetail({
   const router = useRouter()
   const [assignDialogOpen, setAssignDialogOpen] = useState(false)
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([])
+  const [assignFilter, setAssignFilter] = useState("")
+  const [assignCompany, setAssignCompany] = useState("")
+  const [assignRole, setAssignRole] = useState("")
+  const [assignDateFrom, setAssignDateFrom] = useState("")
 
   const alreadyAssigned = new Set(assignedContactIds)
   const availableContacts = contacts.filter((c) => !alreadyAssigned.has(c.id))
+  const filteredAvailable = availableContacts.filter((c) => {
+    if (assignFilter.trim() && ![c.name, c.email, c.company].some((f) => f?.toLowerCase().includes(assignFilter.toLowerCase()))) return false
+    if (assignCompany.trim() && !c.company?.toLowerCase().includes(assignCompany.toLowerCase())) return false
+    if (assignRole.trim() && !c.role?.toLowerCase().includes(assignRole.toLowerCase())) return false
+    const d = c.created_at?.slice(0, 10)
+    if (assignDateFrom && d < assignDateFrom) return false
+    return true
+  })
+  const assignHasFilters = assignFilter.trim() || assignCompany.trim() || assignRole.trim() || assignDateFrom
 
   async function handleAssign(e: React.FormEvent) {
     e.preventDefault()
@@ -93,6 +111,15 @@ export function SequenceDetail({
         : [...prev, contactId]
     )
   }
+
+  const selectAllFiltered = (checked: boolean) => {
+    setSelectedContactIds(
+      checked ? filteredAvailable.map((c) => c.id) : []
+    )
+  }
+  const allFilteredSelected =
+    filteredAvailable.length > 0 &&
+    filteredAvailable.every((c) => selectedContactIds.includes(c.id))
 
   return (
     <div className="flex flex-col gap-6">
@@ -124,7 +151,19 @@ export function SequenceDetail({
             </p>
           </div>
         </div>
-        <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <Dialog
+          open={assignDialogOpen}
+          onOpenChange={(open) => {
+            setAssignDialogOpen(open)
+            if (!open) {
+              setSelectedContactIds([])
+              setAssignFilter("")
+              setAssignCompany("")
+              setAssignRole("")
+              setAssignDateFrom("")
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button size="sm" className="h-8 text-xs">
               <UserPlus className="mr-1 h-3.5 w-3.5" /> Assign Contacts
@@ -138,13 +177,65 @@ export function SequenceDetail({
               <p className="text-xs text-muted-foreground">
                 Select contacts to assign to this sequence.
               </p>
+              {availableContacts.length > 0 && (
+                <>
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex flex-1">
+                      <Search className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        type="text"
+                        placeholder="Search name, email, company..."
+                        value={assignFilter}
+                        onChange={(e) => setAssignFilter(e.target.value)}
+                        className="h-8 w-full rounded-md border border-input bg-background pl-7 pr-8 text-xs"
+                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button type="button" variant="ghost" size="icon" className="absolute right-0 h-8 w-8 text-muted-foreground" aria-label="Filter options">
+                            <SlidersHorizontal className="h-3.5 w-3.5" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-72">
+                          <div className="flex flex-col gap-3">
+                            <p className="text-xs font-medium text-foreground">Filters</p>
+                            <div className="grid gap-2">
+                              <Label className="text-xs">Company</Label>
+                              <Input placeholder="Company" value={assignCompany} onChange={(e) => setAssignCompany(e.target.value)} className="h-8 text-xs" />
+                              <Label className="text-xs">Role / title</Label>
+                              <Input placeholder="Role" value={assignRole} onChange={(e) => setAssignRole(e.target.value)} className="h-8 text-xs" />
+                              <Label className="text-xs">Created from</Label>
+                              <Input type="date" value={assignDateFrom} onChange={(e) => setAssignDateFrom(e.target.value)} className="h-8 text-xs" />
+                            </div>
+                            {assignHasFilters && (
+                              <Button type="button" variant="outline" size="sm" className="h-8 text-xs" onClick={() => { setAssignFilter(""); setAssignCompany(""); setAssignRole(""); setAssignDateFrom("") }}>
+                                Clear filters
+                              </Button>
+                            )}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                      <Checkbox
+                        checked={allFilteredSelected}
+                        onCheckedChange={(checked) => selectAllFiltered(checked === true)}
+                      />
+                      Select all
+                    </label>
+                  </div>
+                </>
+              )}
               <div className="flex max-h-60 flex-col gap-1 overflow-y-auto rounded-md border border-border p-2">
                 {availableContacts.length === 0 ? (
                   <p className="py-4 text-center text-xs text-muted-foreground">
                     All contacts are already assigned to this sequence.
                   </p>
+                ) : filteredAvailable.length === 0 ? (
+                  <p className="py-4 text-center text-xs text-muted-foreground">
+                    No contacts match the filter.
+                  </p>
                 ) : (
-                  availableContacts.map((contact) => (
+                  filteredAvailable.map((contact) => (
                     <label
                       key={contact.id}
                       className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/60"
@@ -174,6 +265,10 @@ export function SequenceDetail({
                   onClick={() => {
                     setAssignDialogOpen(false)
                     setSelectedContactIds([])
+                    setAssignFilter("")
+                    setAssignCompany("")
+                    setAssignRole("")
+                    setAssignDateFrom("")
                   }}
                 >
                   Cancel

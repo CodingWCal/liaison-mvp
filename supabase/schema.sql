@@ -66,3 +66,7 @@ create table if not exists public.completed_tasks (
   unique(clerk_user_id, contact_id, sequence_id, step_order)
 );
 create index if not exists idx_completed_tasks_clerk_user_id on public.completed_tasks(clerk_user_id);
+
+-- Add LinkedIn and company website to contacts (run if table already exists)
+alter table public.contacts add column if not exists linkedin_url text;
+alter table public.contacts add column if not exists company_website text;

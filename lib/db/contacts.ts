@@ -10,6 +10,8 @@ export type Contact = {
   company: string | null
   email: string | null
   notes: string | null
+  linkedin_url: string | null
+  company_website: string | null
   created_at: string
 }
 
@@ -27,9 +29,51 @@ export async function getContacts(clerkUserId: string): Promise<Contact[]> {
   return (data ?? []) as Contact[]
 }
 
+export type BulkContactInput = {
+  first_name?: string
+  last_name?: string
+  email?: string
+  company?: string
+  title?: string
+  notes?: string
+  linkedin_url?: string
+  company_website?: string
+}
+
+export async function bulkInsertContacts(
+  clerkUserId: string,
+  contactsArray: BulkContactInput[]
+): Promise<number> {
+  const supabase = getSupabaseServer()
+  if (!supabase) throw new Error("Supabase not configured")
+  if (contactsArray.length === 0) return 0
+
+  const rows = contactsArray.map((c) => {
+    const name = [c.first_name, c.last_name].filter(Boolean).join(" ").trim() || "Unnamed"
+    return {
+      clerk_user_id: clerkUserId,
+      name,
+      role: c.title?.trim() ?? null,
+      company: c.company?.trim() ?? null,
+      email: c.email?.trim() ?? null,
+      notes: c.notes?.trim() ?? null,
+      linkedin_url: c.linkedin_url?.trim() ?? null,
+      company_website: c.company_website?.trim() ?? null,
+    }
+  })
+
+  const { data, error } = await supabase
+    .from("contacts")
+    .insert(rows)
+    .select("id")
+
+  if (error) throw error
+  return data?.length ?? 0
+}
+
 export async function createContact(
   clerkUserId: string,
-  input: { name: string; role?: string; company?: string; email?: string; notes?: string }
+  input: { name: string; role?: string; company?: string; email?: string; notes?: string; linkedin_url?: string; company_website?: string }
 ) {
   const supabase = getSupabaseServer()
   if (!supabase) throw new Error("Supabase not configured")
@@ -43,6 +87,8 @@ export async function createContact(
       company: input.company?.trim() ?? null,
       email: input.email?.trim() ?? null,
       notes: input.notes?.trim() ?? null,
+      linkedin_url: input.linkedin_url?.trim() ?? null,
+      company_website: input.company_website?.trim() ?? null,
     })
     .select("id")
     .single()
@@ -54,7 +100,7 @@ export async function createContact(
 export async function updateContact(
   contactId: string,
   clerkUserId: string,
-  input: { name?: string; role?: string; company?: string; email?: string; notes?: string }
+  input: { name?: string; role?: string; company?: string; email?: string; notes?: string; linkedin_url?: string; company_website?: string }
 ) {
   const supabase = getSupabaseServer()
   if (!supabase) throw new Error("Supabase not configured")
@@ -67,6 +113,8 @@ export async function updateContact(
       ...(input.company !== undefined && { company: input.company?.trim() ?? null }),
       ...(input.email !== undefined && { email: input.email?.trim() ?? null }),
       ...(input.notes !== undefined && { notes: input.notes?.trim() ?? null }),
+      ...(input.linkedin_url !== undefined && { linkedin_url: input.linkedin_url?.trim() ?? null }),
+      ...(input.company_website !== undefined && { company_website: input.company_website?.trim() ?? null }),
     })
     .eq("id", contactId)
     .eq("clerk_user_id", clerkUserId)

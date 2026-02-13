@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Mail, Building2, Briefcase, Pencil, Trash2, Workflow } from "lucide-react"
+import { ArrowLeft, Mail, Building2, Briefcase, Pencil, Trash2, Workflow, Linkedin, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -52,8 +52,10 @@ export function ContactDetail({
     const company = (form.elements.namedItem("company") as HTMLInputElement).value
     const email = (form.elements.namedItem("email") as HTMLInputElement).value
     const notes = (form.elements.namedItem("notes") as HTMLTextAreaElement).value
+    const linkedinUrl = (form.elements.namedItem("linkedin_url") as HTMLInputElement).value
+    const companyWebsite = (form.elements.namedItem("company_website") as HTMLInputElement).value
     try {
-      await updateContact(contact.id, clerkUserId, { name, role, company, email, notes })
+      await updateContact(contact.id, clerkUserId, { name, role, company, email, notes, linkedin_url: linkedinUrl || undefined, company_website: companyWebsite || undefined })
       toast.success("Contact updated")
       router.refresh()
     } catch {
@@ -108,6 +110,18 @@ export function ContactDetail({
                 <Mail className="h-3.5 w-3.5" /> {contact.email}
               </a>
             )}
+            <div className="mt-2 flex flex-wrap gap-3 text-sm">
+              {contact.linkedin_url && (
+                <a href={contact.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-primary hover:underline">
+                  <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+                </a>
+              )}
+              {contact.company_website && (
+                <a href={contact.company_website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-primary hover:underline">
+                  <Globe className="h-3.5 w-3.5" /> Company
+                </a>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -168,6 +182,43 @@ export function ContactDetail({
                       name="email"
                       type="email"
                       defaultValue={contact.email ?? ""}
+                      className="h-8 text-xs"
+                      onBlur={(e) => {
+                        const form = e.currentTarget.form
+                        const web = form?.querySelector<HTMLInputElement>("[name=company_website]")
+                        const email = e.currentTarget.value
+                        if (web && !web.value && email) {
+                          const m = email.match(/@(.+)$/)
+                          if (m) web.value = `https://${m[1]}`
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="linkedin_url" className="text-xs">
+                      LinkedIn URL
+                    </Label>
+                    <Input
+                      id="linkedin_url"
+                      name="linkedin_url"
+                      type="url"
+                      placeholder="https://linkedin.com/in/..."
+                      defaultValue={contact.linkedin_url ?? ""}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="company_website" className="text-xs">
+                      Company website
+                    </Label>
+                    <Input
+                      id="company_website"
+                      name="company_website"
+                      type="url"
+                      placeholder="https://..."
+                      defaultValue={contact.company_website ?? ""}
                       className="h-8 text-xs"
                     />
                   </div>
