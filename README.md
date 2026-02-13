@@ -1,6 +1,6 @@
 # Liaison
 
-**Lightweight relationship and outreach management** for professionals—sales prospects, partnerships, recruiting leads, and coffee chats. Liaison focuses on **clarity**, **ownership**, and **reuse** of outreach workflows rather than automation or message volume.
+**Lightweight relationship and outreach management** for professionals—sales prospects, partnerships, recruiting leads, and coffee chats. Liaison is more than a standard CRM, it focuses on **clarity**, **ownership**, and **reuse** of outreach workflows rather than automation or message volume.
 
 **[→ Live app](https://liaison-mvp.vercel.app/)**
 
